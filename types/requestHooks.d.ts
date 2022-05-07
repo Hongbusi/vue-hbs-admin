@@ -1,30 +1,29 @@
 import { AxiosPromise, AxiosResponse } from "axios";
 import { Ref } from "vue";
 declare global {
-  declare interface UseLoadingRequestParameters<T>
-    extends UseIsNullRequestParameters<T> {
+  interface BaseParams<T> {
+    state?: Ref<T>;
+    axios: AxiosPromise<ResponseData<T>>;
+    key?: string;
+  }
+
+  interface UseLoadingRequestParameters<T> extends BaseParams<T> {
     loadings?: Ref<boolean> | Ref<boolean>[];
     scheduler?: (
       res: AxiosResponse<ResponseData<T>, any>,
       refSeta?: Ref<T>
     ) => any;
   }
+  type UseIsNullRequestParameters<T> = BaseParams<T>;
 
-  declare interface UseIsNullRequestParameters<T> {
-    state?: Ref<T>;
-    axios: AxiosPromise<ResponseData<T>>;
-    key?: string;
-  }
-
-  declare interface UseMessageRequest<T>
-    extends UseLoadingRequestParameters<T> {
+  interface UseMessageRequest<T> extends UseLoadingRequestParameters<T> {
     successMessage?: string;
     errorMessage?: string;
     successCode?: string | number;
     errorCode?: string | number;
   }
 
-  declare interface UseOptionsRequestParameters<T> {
+  interface UseOptionsRequestParameters<T> {
     axios?: AxiosPromise<ResponseData<T>>;
     scheduler?: (
       res: AxiosResponse<ResponseData<T>, any>,
@@ -32,28 +31,27 @@ declare global {
     ) => void;
   }
 
-  declare type Pagination<T> = T & { pageSize: number; pageNum: number };
+  type Pagination<T> = T & { pageSize: number; pageNum: number };
 
   /**
    * @description usePaginationRequest函数的返回值
    */
-  declare interface PaginationRequestReturn {
-    // pagination?: ShallowReactive<{ pageSize: number; pageNum: number }>
+  interface PaginationRequestReturn {
     prev: () => number;
     next: () => number;
     to: (num: number) => number;
     pageSize: Ref<number>;
     pageNum: Ref<number>;
   }
-  declare type PaginationRequestReturnRes = Promise<PaginationRequestReturn>;
+  type PaginationRequestReturnRes = Promise<PaginationRequestReturn>;
 
-  declare type PaginationTool = { [index: string]: PaginationRequestReturn };
+  type PaginationTool = { [index: string]: PaginationRequestReturn };
 
-  declare type PaginationAxios<Y, T = {}> = (
+  type PaginationAxios<Y, T = {}> = (
     data: Pagination<T>
   ) => AxiosPromise<ResponseData<Y>>;
 
-  declare interface PaginationRequestParams<Y, T> {
+  interface PaginationRequestParams<Y, T> {
     successMessage?: string;
     errorMessage?: string;
     successCode?: string;
@@ -70,10 +68,8 @@ declare global {
     page?: Ref<number>;
   }
 
-  declare type PaginationAxiosCache = (
-    data: any
-  ) => AxiosPromise<ResponseData<any>>;
-  declare interface UseCacheRequestParameters {
+  type PaginationAxiosCache = (data: any) => AxiosPromise<ResponseData<any>>;
+  interface UseCacheRequestParameters {
     key: string;
   }
 }
